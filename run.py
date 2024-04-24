@@ -40,7 +40,7 @@ class Runner:
         """
         instantiate runner object with processed config and register config into Registry class
         """
-        self.config, self.duplicate_config = build_config(pArgs)
+        self.config, self.duplicate_config = build_config(pArgs.__dict__)
         self.config_registry()
 
     def config_registry(self):
