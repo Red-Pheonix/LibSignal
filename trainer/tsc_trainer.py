@@ -16,13 +16,15 @@ class TSCTrainer(BaseTrainer):
         logger,
         gpu=0,
         cpu=False,
-        name="tsc"
+        name="tsc",
+        **kwargs
     ):
         super().__init__(
             logger=logger,
             gpu=gpu,
             cpu=cpu,
-            name=name
+            name=name,
+            **kwargs
         )
         self.episodes = Registry.mapping['trainer_mapping']['setting'].param['episodes']
         self.steps = Registry.mapping['trainer_mapping']['setting'].param['steps']

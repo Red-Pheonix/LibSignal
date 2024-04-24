@@ -16,9 +16,10 @@ class BaseTrainer(ABC):
         logger,
         gpu=0,
         cpu=False,
-        name="base"
+        name="base",
+        config_path=None,
     ):
-        self.path = os.path.join('configs/sim', Registry.mapping['command_mapping']['setting'].param['network'] + '.cfg')
+        self.path = config_path if config_path is not None else os.path.join('configs/sim', Registry.mapping['command_mapping']['setting'].param['network'] + '.cfg')
         self.save_replay = Registry.mapping['world_mapping']['setting'].param['saveReplay']
         if self.save_replay:
             if Registry.mapping['command_mapping']['setting'].param['world'] == 'cityflow':
