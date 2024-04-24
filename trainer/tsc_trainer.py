@@ -16,24 +16,36 @@ class TSCTrainer(BaseTrainer):
         logger,
         gpu=0,
         cpu=False,
-        name="tsc"
+        name="tsc",
+        episodes=None,
+        steps=None,
+        test_steps=None,
+        buffer_size=None,
+        action_interval=None,
+        save_rate=None,
+        learning_start=None,
+        update_model_rate=None,
+        update_target_rate=None,
+        test_when_train=None,
+        **kwargs
     ):
         super().__init__(
             logger=logger,
             gpu=gpu,
             cpu=cpu,
-            name=name
+            name=name,
+            **kwargs
         )
-        self.episodes = Registry.mapping['trainer_mapping']['setting'].param['episodes']
-        self.steps = Registry.mapping['trainer_mapping']['setting'].param['steps']
-        self.test_steps = Registry.mapping['trainer_mapping']['setting'].param['test_steps']
-        self.buffer_size = Registry.mapping['trainer_mapping']['setting'].param['buffer_size']
-        self.action_interval = Registry.mapping['trainer_mapping']['setting'].param['action_interval']
-        self.save_rate = Registry.mapping['logger_mapping']['setting'].param['save_rate']
-        self.learning_start = Registry.mapping['trainer_mapping']['setting'].param['learning_start']
-        self.update_model_rate = Registry.mapping['trainer_mapping']['setting'].param['update_model_rate']
-        self.update_target_rate = Registry.mapping['trainer_mapping']['setting'].param['update_target_rate']
-        self.test_when_train = Registry.mapping['trainer_mapping']['setting'].param['test_when_train']
+        self.episodes = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['episodes'], episodes)
+        self.steps = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['steps'], steps)
+        self.test_steps = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['test_steps'], test_steps)
+        self.buffer_size = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['buffer_size'], buffer_size)
+        self.action_interval = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['action_interval'], action_interval)
+        self.save_rate = self.pick_value(Registry.mapping['logger_mapping']['setting'].param['save_rate'], save_rate)
+        self.learning_start = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['learning_start'], learning_start)
+        self.update_model_rate = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['update_model_rate'], update_model_rate)
+        self.update_target_rate = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['update_target_rate'], update_target_rate)
+        self.test_when_train = self.pick_value(Registry.mapping['trainer_mapping']['setting'].param['test_when_train'], test_when_train)
         # replay file is only valid in cityflow now. 
         # TODO: support SUMO and Openengine later
         

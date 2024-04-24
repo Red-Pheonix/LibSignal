@@ -16,10 +16,12 @@ class BaseTrainer(ABC):
         logger,
         gpu=0,
         cpu=False,
-        name="base"
+        name="base",
+        network_path=None,
+        save_replay=None,
     ):
-        self.path = os.path.join('configs/sim', Registry.mapping['command_mapping']['setting'].param['network'] + '.cfg')
-        self.save_replay = Registry.mapping['world_mapping']['setting'].param['saveReplay']
+        self.path = self.pick_value(os.path.join('configs/sim', Registry.mapping['command_mapping']['setting'].param['network'] + '.cfg'), network_path)
+        self.save_replay = self.pick_value(Registry.mapping['world_mapping']['setting'].param['saveReplay'], save_replay)
         if self.save_replay:
             if Registry.mapping['command_mapping']['setting'].param['world'] == 'cityflow':
                 self.dir = Registry.mapping['world_mapping']['setting'].param['dir']
@@ -57,7 +59,7 @@ class BaseTrainer(ABC):
         '''
         self.load_seed_from_config()
         # self.load_logger()
-    
+
     def load_seed_from_config(self):
         '''
         load_seed_from_config
@@ -109,10 +111,13 @@ class BaseTrainer(ABC):
         self.create_metrics()
         self.create_env()
 
+    def pick_value(self, default, override):
+        return override if override is not None else default
+
     @abstractmethod
     def create_world(self):
         """Derived classes should implement this function."""
-    
+
     @abstractmethod
     def create_agents(self):
         """Derived classes should implement this function."""
@@ -135,5 +140,5 @@ class BaseTrainer(ABC):
     @abstractmethod
     def test(self, drop_load=False):
         """Derived classes should implement this function."""
-        
+
 
