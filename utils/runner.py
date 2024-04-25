@@ -22,7 +22,9 @@ class Runner:
                 agent="dqn",
                 world="sumo",
                 network="sumo1x3",
-                dataset="onfly"
+                dataset="onfly",
+                save_dir="",
+                load_dir="",
         ):
         """
         instantiate runner object with processed config and register config into Registry class
@@ -40,6 +42,8 @@ class Runner:
         runner_config['world'] = world
         runner_config['network'] = network
         runner_config['dataset'] = dataset
+        runner_config['save_dir'] = save_dir
+        runner_config['load_dir'] = load_dir
 
         self.config, self.duplicate_config = build_config(runner_config)
         self.config_registry()
