@@ -41,12 +41,11 @@ class World_param_Interface(Interface):
     def __init__(self, config):
         super(World_param_Interface, self).__init__()
         config_filename = config['command']['network']
-        if not config_filename.endswith(".cfg"):
-            config_filename = os.path.join('configs/sim', config_filename + '.cfg')
+        config_filename = os.path.join('configs/sim', config_filename + '.cfg')
         path = os.path.join(os.getcwd(), config_filename)
         other_world_settings = modify_config_file(path, config)
         World_param_Interface.param = load_config_dict(path, other_world_settings)
-        
+
 
 @Registry.register_model('setting')
 class ModelAgent_param_Interface(Interface):

@@ -19,8 +19,7 @@ class BaseTrainer(ABC):
         name="base",
     ):
         path = Registry.mapping['command_mapping']['setting'].param['network']
-        if not path.endswith(".cfg"):
-            path = os.path.join('configs/sim', path + '.cfg')
+        path = os.path.join('configs/sim', path + '.cfg')
         self.path = path
         
         self.save_replay = Registry.mapping['world_mapping']['setting'].param['saveReplay']

@@ -66,10 +66,10 @@ class DQNAgent(RLAgent):
         self.target_model = self._build_model()
         self.update_target_network()
         
-        # load model
-        load_dir = Registry.mapping['command_mapping']['setting'].param['load_dir']
-        if load_dir:
-            self.load_model(e=0, load_dir=load_dir)
+        # # load model
+        # load_dir = Registry.mapping['command_mapping']['setting'].param['load_dir']
+        # if load_dir:
+        #     self.load_model(e=0, load_dir=load_dir)
 
         self.criterion = nn.MSELoss(reduction='mean')
         self.optimizer = optim.RMSprop(self.model.parameters(),

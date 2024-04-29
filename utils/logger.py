@@ -95,8 +95,7 @@ def build_config(args):
     -args: command line arguments take in from run.py
     """
     agent_name = args['agent']
-    if not agent_name.endswith(".yml"):
-        agent_name = os.path.join('./configs', args.get("task"), f'{agent_name}.yml')
+    agent_name = os.path.join('./configs', args.get("task"), f'{agent_name}.yml')
     config, duplicates_warning = load_config(agent_name)
     args['agent'] = config['model']['name']
     config.update({'command': args})
