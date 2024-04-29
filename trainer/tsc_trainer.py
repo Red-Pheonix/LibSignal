@@ -16,13 +16,15 @@ class TSCTrainer(BaseTrainer):
         logger,
         gpu=0,
         cpu=False,
-        name="tsc"
+        name="tsc",
+        **kwargs
     ):
         super().__init__(
             logger=logger,
             gpu=gpu,
             cpu=cpu,
-            name=name
+            name=name,
+            **kwargs
         )
         self.episodes = Registry.mapping['trainer_mapping']['setting'].param['episodes']
         self.steps = Registry.mapping['trainer_mapping']['setting'].param['steps']
@@ -200,6 +202,9 @@ class TSCTrainer(BaseTrainer):
                 self.train_test(e)
         # self.dataset.flush([ag.replay_buffer for ag in self.agents])
         [ag.save_model(e=self.episodes) for ag in self.agents]
+        save_dir = Registry.mapping['command_mapping']['setting'].param['save_dir']
+        if save_dir:
+            [ag.save_model(e=0, save_dir=save_dir) for ag in self.agents]
 
     def train_test(self, e):
         '''
