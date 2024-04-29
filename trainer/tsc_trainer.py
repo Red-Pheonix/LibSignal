@@ -36,9 +36,9 @@ class TSCTrainer(BaseTrainer):
         self.update_model_rate = Registry.mapping['trainer_mapping']['setting'].param['update_model_rate']
         self.update_target_rate = Registry.mapping['trainer_mapping']['setting'].param['update_target_rate']
         self.test_when_train = Registry.mapping['trainer_mapping']['setting'].param['test_when_train']
-        # replay file is only valid in cityflow now. 
+        # replay file is only valid in cityflow now.
         # TODO: support SUMO and Openengine later
-        
+
         # TODO: support other dataset in the future
         self.dataset = Registry.mapping['dataset_mapping'][Registry.mapping['command_mapping']['setting'].param['dataset']](
             os.path.join(Registry.mapping['logger_mapping']['path'].path,
@@ -96,7 +96,14 @@ class TSCTrainer(BaseTrainer):
         for i in range(1, num_agent):
             self.agents.append(Registry.mapping['model_mapping'][Registry.mapping['command_mapping']['setting'].param['agent']](self.world, i))
 
-        # for magd agents should share information 
+        # load model if specified
+        load_dir = Registry.mapping['command_mapping']['setting'].param['load_dir']
+        load_prefix = Registry.mapping['command_mapping']['setting'].param['load_prefix']
+        for agent in self.agents:
+            if load_dir:
+                agent.load_model(e=load_prefix, load_dir=load_dir)
+
+        # for magd agents should share information
         if Registry.mapping['model_mapping']['setting'].param['name'] == 'magd':
             for ag in self.agents:
                 ag.link_agents(self.agents)
@@ -144,7 +151,7 @@ class TSCTrainer(BaseTrainer):
                     if total_decision_num > self.learning_start:
                         actions = []
                         for idx, ag in enumerate(self.agents):
-                            actions.append(ag.get_action(last_obs[idx], last_phase[idx], test=False))                            
+                            actions.append(ag.get_action(last_obs[idx], last_phase[idx], test=False))
                         actions = np.stack(actions)  # [agent, intersections]
                     else:
                         actions = np.stack([ag.sample() for ag in self.agents])
@@ -187,7 +194,7 @@ class TSCTrainer(BaseTrainer):
                 mean_loss = np.mean(np.array(episode_loss))
             else:
                 mean_loss = 0
-            
+
             self.writeLog("TRAIN", e, self.metric.real_average_travel_time(),\
                 mean_loss, self.metric.rewards(), self.metric.queue(), self.metric.delay(), self.metric.throughput())
             self.logger.info("step:{}/{}, q_loss:{}, rewards:{}, queue:{}, delay:{}, throughput:{}".format(i, self.steps,\
@@ -202,9 +209,11 @@ class TSCTrainer(BaseTrainer):
                 self.train_test(e)
         # self.dataset.flush([ag.replay_buffer for ag in self.agents])
         [ag.save_model(e=self.episodes) for ag in self.agents]
+        # save trained model weights to save directory
         save_dir = Registry.mapping['command_mapping']['setting'].param['save_dir']
+        save_prefix = Registry.mapping['command_mapping']['setting'].param['save_prefix']
         if save_dir:
-            [ag.save_model(e=0, save_dir=save_dir) for ag in self.agents]
+            [ag.save_model(e=save_prefix, save_dir=save_dir) for ag in self.agents]
 
     def train_test(self, e):
         '''

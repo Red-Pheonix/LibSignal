@@ -282,8 +282,6 @@ class DQNAgent(RLAgent):
         else:
             model_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
                                 'model', f'{e}_{self.rank}.pt')
-        self.model = self._build_model()
-        self.target_model = self._build_model()
         self.model.load_state_dict(torch.load(model_name))
         self.update_target_network()
 

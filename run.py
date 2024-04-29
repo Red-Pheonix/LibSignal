@@ -19,7 +19,9 @@ parser.add_argument('-w', '--world', type=str, default="cityflow", choices=['cit
 parser.add_argument('-n', '--network', type=str, default="cityflow1x1", help="network name")
 parser.add_argument('-d', '--dataset', type=str, default='onfly', help='type of dataset in training process')
 parser.add_argument('-s', '--save_dir', type=str, default='', help='path where models are saved')
+parser.add_argument('-sp', '--save_prefix', type=str, default='final', help='prefix of saved model weights')
 parser.add_argument('-l', '--load_dir', type=str, default='', help='path where models are loaded before training')
+parser.add_argument('-lp', '--load_prefix', type=str, default='final', help='prefix of loaded model weights')
 
 args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = args.ngpu

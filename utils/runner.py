@@ -24,7 +24,9 @@ class Runner:
                 network="sumo1x3",
                 dataset="onfly",
                 save_dir="",
+                save_prefix="final",
                 load_dir="",
+                load_prefix="final",
         ):
         """
         instantiate runner object with processed config and register config into Registry class
@@ -43,7 +45,9 @@ class Runner:
         runner_config['network'] = network
         runner_config['dataset'] = dataset
         runner_config['save_dir'] = save_dir
+        runner_config['save_prefix'] = save_prefix
         runner_config['load_dir'] = load_dir
+        runner_config['load_prefix'] = load_prefix
 
         self.config, self.duplicate_config = build_config(runner_config)
         self.config_registry()
