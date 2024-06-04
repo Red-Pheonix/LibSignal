@@ -382,6 +382,11 @@ class World(object):
                          '--no-warnings', str(sumo_dict['no_warning'])]
         self.net = os.path.join(sumo_dict['dir'], sumo_dict['roadnetFile'])
         self.route = os.path.join(sumo_dict['dir'], sumo_dict['flowFile'])
+        
+        # check random seed
+        random = "true" if sumo_dict.get('random') else "false"
+        sumo_cmd += ['--random', random]
+        
         self.sumo_cmd = sumo_cmd
         self.warning = sumo_dict['no_warning']
         print("building world...")
