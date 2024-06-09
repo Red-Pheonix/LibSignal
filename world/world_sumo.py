@@ -386,6 +386,9 @@ class World(object):
         # check random seed
         random = "true" if sumo_dict.get('random') else "false"
         sumo_cmd += ['--random', random]
+        if sumo_dict.get('args'):
+            args = sumo_dict.get('args').split()
+            sumo_cmd += args
         
         self.sumo_cmd = sumo_cmd
         self.warning = sumo_dict['no_warning']
