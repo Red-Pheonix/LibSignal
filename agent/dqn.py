@@ -112,6 +112,9 @@ class DQNAgent(RLAgent):
         x_obs = []
         x_obs.append(self.ob_generator.generate())
         x_obs = np.array(x_obs, dtype=np.float32)
+        # x_obs = (x_obs + np.random.poisson(lam=0.5, size=6) - 1).clip(0)
+        # np.random.seed(self.rank)
+        # x_obs = x_obs * np.random.binomial(1, 0.9, 6)
         return x_obs
 
     def get_reward(self):
@@ -125,6 +128,9 @@ class DQNAgent(RLAgent):
         rewards = []
         rewards.append(self.reward_generator.generate())
         rewards = np.squeeze(np.array(rewards)) * 12
+        # rewards = (rewards + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
+        # np.random.seed(self.rank)
+        # rewards = (rewards * np.random.binomial(1, 0.9, 1)).sum()
         return rewards
 
     def get_phase(self):
