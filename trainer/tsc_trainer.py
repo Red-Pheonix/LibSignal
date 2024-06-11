@@ -190,6 +190,11 @@ class TSCTrainer(BaseTrainer):
 
                 if all(dones):
                     break
+                
+                if i % 900 == 0:
+                    self.writeLog("TRAIN_VERBOSE", e, self.metric.real_average_travel_time(),\
+                np.mean(np.array(episode_loss)), self.metric.rewards(), self.metric.queue(), self.metric.delay(), self.metric.throughput())
+                    
             if len(episode_loss) > 0:
                 mean_loss = np.mean(np.array(episode_loss))
             else:
@@ -241,6 +246,11 @@ class TSCTrainer(BaseTrainer):
                     rewards_list.append(np.stack(rewards))
                 rewards = np.mean(rewards_list, axis=0)  # [agent, intersection]
                 self.metric.update(rewards)
+                
+                if i % 900 == 0:
+                    self.writeLog("TEST_VERBOSE", e, self.metric.real_average_travel_time(),\
+                100, self.metric.rewards(), self.metric.queue(), self.metric.delay(), self.metric.throughput())
+                
             if all(dones):
                 break
         self.logger.info("Test step:{}/{}, travel time :{}, rewards:{}, queue:{}, delay:{}, throughput:{}".format(\
