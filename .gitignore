@@ -11,3 +11,4 @@ data/raw_data/grid4x4/*.pdf
 robust grid4x4 experiments/dqn/combined_queue_sensor.xml
 robust grid4x4 experiments/colight/combined_sensor_queue.xml
 robust grid4x4 experiments/mplight/combined_sensor_queue.xml
+robust grid4x4 experiments/fixedtime/combined_queue.xml
