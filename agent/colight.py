@@ -196,6 +196,11 @@ class CoLightAgent(RLAgent):
             x_obs.append(ob)
             
         x_obs = np.array(x_obs, dtype=np.float32)
+        
+        # x_obs = (x_obs + np.random.poisson(lam=0.5, size=x_obs.shape) - 1).clip(0)
+        # np.random.seed(0)
+        # x_obs = x_obs * np.random.binomial(1, 0.9, x_obs.shape)
+
         return x_obs
 
     def get_reward(self):
@@ -204,6 +209,11 @@ class CoLightAgent(RLAgent):
         for i in range(len(self.reward_generator)):
             rewards.append(self.reward_generator[i][1].generate())
         rewards = np.squeeze(np.array(rewards, dtype=np.float32)) * 12
+        
+        # rewards = (rewards + np.random.poisson(lam=0.5, size=rewards.shape) - 1).clip(max=0)
+        # np.random.seed(0)
+        # rewards = (rewards * np.random.binomial(1, 0.9, rewards.shape))
+        
         return rewards
 
     def get_phase(self):

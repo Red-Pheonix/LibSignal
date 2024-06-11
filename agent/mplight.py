@@ -253,9 +253,18 @@ class MPLightAgent(RLAgent):
                 x_obs.append(np.array(tt))     
             else:
                 x_obs.append(tmp)
-            
+
         if self.ob_order != None:
             x_obs = np.array(x_obs, dtype=np.float32)
+
+        # noisy_x_obs = []
+        # for i,x_ob in enumerate(x_obs):
+        #     x_ob = (x_ob + np.random.poisson(lam=0.5, size=6) - 1).clip(0)
+        #     np.random.seed(i)
+        #     x_ob = x_ob * np.random.binomial(1, 0.9, 6)
+        #     noisy_x_obs.append(x_ob)
+        # x_obs = noisy_x_obs
+        
         return x_obs
 
     def get_reward(self):
@@ -271,6 +280,15 @@ class MPLightAgent(RLAgent):
         for i in range(len(self.reward_generator)):
             rewards.append(self.reward_generator[i][1].generate())
         rewards = np.squeeze(np.array(rewards))
+        
+        # noisy_rewards = []
+        # for i, reward in enumerate(rewards):
+        #     reward = (reward + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
+        #     np.random.seed(i)
+        #     reward = (reward * np.random.binomial(1, 0.9, 1)).sum()
+        #     noisy_rewards.append(reward)
+        # rewards = noisy_rewards
+
         return rewards
 
     def get_phase(self):
