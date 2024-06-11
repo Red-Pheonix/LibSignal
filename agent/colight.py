@@ -328,16 +328,23 @@ class CoLightAgent(RLAgent):
         weights = self.model.state_dict()
         self.target_model.load_state_dict(weights)
 
-    def load_model(self, e):
-        model_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
-                                  'model', f'{e}_{self.rank}.pt')
-        self.model = self._build_model()
+    def load_model(self, e, load_dir=""):
+        if load_dir:
+            model_name = os.path.join(load_dir, f'{e}_{self.rank}.pt')
+        else:
+            model_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
+                                'model', f'{e}_{self.rank}.pt')
+        # self.model.load_state_dict(torch.load(model_name))
+        # self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_name))
-        self.target_model = self._build_model()
+        # self.target_model = self._build_model()
         self.target_model.load_state_dict(torch.load(model_name))
 
-    def save_model(self, e):
-        path = os.path.join(Registry.mapping['logger_mapping']['path'].path, 'model')
+    def save_model(self, e, save_dir=""):
+        if save_dir:
+            path = save_dir
+        else:
+            path = os.path.join(Registry.mapping['logger_mapping']['path'].path, 'model')
         if not os.path.exists(path):
             os.makedirs(path)
         model_name = os.path.join(path, f'{e}_{self.rank}.pt')
