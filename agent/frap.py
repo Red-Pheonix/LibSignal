@@ -341,7 +341,7 @@ class FRAP_DQNAgent(RLAgent):
             self.epsilon *= self.epsilon_decay
         return loss.clone().detach().numpy()
 
-    def load_model(self, e):
+    def load_model(self, e, load_dir):
         '''
         load_model
         Load model params of an episode.
@@ -349,14 +349,18 @@ class FRAP_DQNAgent(RLAgent):
         :param e: specified episode
         :return: None
         '''
-        model_name = os.path.join(
-            Registry.mapping['logger_mapping']['path'].path, 'model', f'{e}_{self.rank}.pt')
-        self.model = FRAP(self.dic_agent_conf, self.dic_phase_expansion, self.num_actions, self.phase_pairs, self.comp_mask)
+        if load_dir:
+            model_name = os.path.join(load_dir, f'{e}_{self.rank}.pt')
+        else:
+            model_name = os.path.join(
+                Registry.mapping['logger_mapping']['path'].path, 'model', f'{e}_{self.rank}.pt')
+            
+        # self.model = FRAP(self.dic_agent_conf, self.dic_phase_expansion, self.num_actions, self.phase_pairs, self.comp_mask)
         self.model.load_state_dict(torch.load(model_name))
-        self.target_model = FRAP(self.dic_agent_conf, self.dic_phase_expansion, self.num_actions, self.phase_pairs, self.comp_mask)
+        # self.target_model = FRAP(self.dic_agent_conf, self.dic_phase_expansion, self.num_actions, self.phase_pairs, self.comp_mask)
         self.target_model.load_state_dict(torch.load(model_name))
 
-    def save_model(self, e):
+    def save_model(self, e,save_dir=""):
         '''
         save_model
         Save model params of an episode.
@@ -364,8 +368,10 @@ class FRAP_DQNAgent(RLAgent):
         :param e: specified episode, used for file name
         :return: None
         '''
-        path = os.path.join(
-            Registry.mapping['logger_mapping']['path'].path, 'model')
+        if save_dir:
+            path = save_dir
+        else:
+            path = os.path.join(Registry.mapping['logger_mapping']['path'].path, 'model')
         if not os.path.exists(path):
             os.makedirs(path)
         model_name = os.path.join(path, f'{e}_{self.rank}.pt')

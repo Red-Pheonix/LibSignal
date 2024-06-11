@@ -468,7 +468,7 @@ class MPLightAgent(RLAgent):
         return result[1][1]
 
 
-    def load_model(self, e):
+    def load_model(self, e, load_dir=""):
         '''
         load_model
         Load model params of an episode.
@@ -476,14 +476,24 @@ class MPLightAgent(RLAgent):
         :param e: specified episode
         :return: None
         '''
-        model_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
-                                  'model', f'{e}_{self.rank}.pt')
-        self.agents_iner = self._build_model()
-        # self.agents_iner.load_state_dict(torch.load(model_name))
-        tmp_dict = {}
-        tmp_dict.load_state_dict(torch.load(model_name))
+        if load_dir:
+            model_name = os.path.join(load_dir, f'{e}_{self.rank}.pt')
+            optimizer_name = os.path.join(load_dir, f'{e}_{self.rank}_optimizer.pt')
+        else:
+            model_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
+                                'model', f'{e}_{self.rank}.pt')
+            optimizer_name = os.path.join(Registry.mapping['logger_mapping']['path'].path,
+                                'model', f'{e}_{self.rank}_optimizer.pt')
+        
+        # self.agents_iner = self._build_model()
+        self.model.load_state_dict(torch.load(model_name))
+        # self.optimizer.load_state_dict(torch.load(optimizer_name))
+        inner_model_name = model_name.rstrip(".pt") + "_inner"
+        self.agents_iner.load(inner_model_name)
+        # tmp_dict = {}
+        # tmp_dict.load_state_dict(torch.load(model_name))
 
-    def save_model(self, e):
+    def save_model(self, e, save_dir=""):
         '''
         save_model
         Save model params of an episode.
@@ -491,15 +501,23 @@ class MPLightAgent(RLAgent):
         :param e: specified episode, used for file name
         :return: None
         '''
-        path = os.path.join(Registry.mapping['logger_mapping']['path'].path, 'model')
+        if save_dir:
+            path = save_dir
+        else:
+            path = os.path.join(Registry.mapping['logger_mapping']['path'].path, 'model')
         if not os.path.exists(path):
             os.makedirs(path)
         model_name = os.path.join(path, f'{e}_{self.rank}.pt')
+        optimizer_name = os.path.join(path, f'{e}_{self.rank}_optimizer.pt')
         # torch.save(self.target_model.state_dict(), model_name)
-        torch.save({
-            'model_state_dict': self.model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
-        }, model_name)
+        # torch.save({
+        #     'model_state_dict': self.model.state_dict(),
+        #     'inner_agents_state_dict': self.optimizer.state_dict(),
+        # }, model_name)
+        torch.save(self.model.state_dict(), model_name)
+        torch.save(self.optimizer.state_dict(), optimizer_name)
+        inner_model_name = model_name.rstrip(".pt")+"_inner"
+        self.agents_iner.save(inner_model_name)
 
 class MPLight_InerAgent(DQN):
     '''
