@@ -101,7 +101,8 @@ class CoLightAgent(RLAgent):
         self.phase_generator = phasing_generators
 
         # TODO: add irregular control of signals in the future
-        self.action_space = gym.spaces.Discrete(len(self.world.intersections[0].phases))
+        self.phase_lengths = np.array([len(i.phases) for i in self.world.intersections])
+        self.action_space = gym.spaces.Discrete(max(self.phase_lengths))
         min_ob_length = max([ob[1].ob_length for ob in self.ob_generator])
         if self.phase:
             # TODO: irregular ob and phase in the future
@@ -269,14 +270,20 @@ class CoLightAgent(RLAgent):
             actions = self.model(x=dp.x, edge_index=dp.edge_index, train=False)
             att = None
             actions = actions.clone().detach().numpy()
-            return np.argmax(actions, axis=1), att  # [batch, agents], [batch, agents, nv, neighbor]
+            action = np.argmax(actions, axis=1)
+            action = np.clip(action, 0, self.phase_lengths - 1)
+            return action, att  # [batch, agents], [batch, agents, nv, neighbor]
         else:
             actions = self.model(x=dp.x, edge_index=dp.edge_index, train=False)
             actions = actions.clone().detach().numpy()
-            return np.argmax(actions, axis=1)  # [batch, agents] TODO: check here
+            action = np.argmax(actions, axis=1)
+            action = np.clip(action, 0, self.phase_lengths - 1)
+            return action  # [batch, agents] TODO: check here
 
     def sample(self):
-        return np.random.randint(0, self.action_space.n, self.sub_agents)
+        action = np.random.randint(0, self.action_space.n, self.sub_agents)
+        action = np.clip(action, 0, self.phase_lengths - 1)
+        return action
 
     def _build_model(self):
         model = ColightNet(self.ob_length, self.action_space.n, **self.model_dict)
@@ -474,6 +481,7 @@ class MultiHeadAttModel(MessagePassing):
 
         # x has shape [N, d], edge_index has shape [E, 2]
         edge_index, _ = add_self_loops(edge_index=edge_index)
+        edge_index = edge_index * (edge_index < x.size()[0])
         aggregated = self.propagate(x=x, edge_index=edge_index)  # [16, 16]
         out = self.out(aggregated)
         out = F.relu(out)  # [ 16, 128]
