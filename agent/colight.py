@@ -270,14 +270,24 @@ class CoLightAgent(RLAgent):
             actions = self.model(x=dp.x, edge_index=dp.edge_index, train=False)
             att = None
             actions = actions.clone().detach().numpy()
-            action = np.argmax(actions, axis=1)
-            action = np.clip(action, 0, self.phase_lengths - 1)
+            # action = np.argmax(actions, axis=1)
+            action_list = []
+            for action_vec, phase_length in zip(actions, self.phase_lengths):
+                action_list.append(np.argmax(action_vec[0:phase_length]))
+            # action = np.clip(action, 0, self.phase_lengths - 1)
+            action = np.array(action_list)
+            # action = np.clip(action, 0, self.phase_lengths - 1)
             return action, att  # [batch, agents], [batch, agents, nv, neighbor]
         else:
             actions = self.model(x=dp.x, edge_index=dp.edge_index, train=False)
             actions = actions.clone().detach().numpy()
-            action = np.argmax(actions, axis=1)
-            action = np.clip(action, 0, self.phase_lengths - 1)
+            
+            action_list = []
+            for action_vec, phase_length in zip(actions, self.phase_lengths):
+                action_list.append(np.argmax(action_vec[0:phase_length]))
+            # action = np.clip(action, 0, self.phase_lengths - 1)
+            action = np.array(action_list)
+            
             return action  # [batch, agents] TODO: check here
 
     def sample(self):
@@ -286,7 +296,7 @@ class CoLightAgent(RLAgent):
         return action
 
     def _build_model(self):
-        model = ColightNet(self.ob_length, self.action_space.n, **self.model_dict)
+        model = ColightNet(self.ob_length, self.action_space.n, self.phase_lengths, **self.model_dict)
         return model
 
     def remember(self, last_obs, last_phase, actions, actions_prob, rewards, obs, cur_phase, done, key):
@@ -369,9 +379,10 @@ class CoLightAgent(RLAgent):
 
 
 class ColightNet(nn.Module):
-    def __init__(self, input_dim, output_dim, **kwargs):
+    def __init__(self, input_dim, output_dim, phase_lengths, **kwargs):
         super(ColightNet, self).__init__()
         self.model_dict = kwargs
+        self.batch_size = self.model_dict['batch_size']
         self.action_space = gym.spaces.Discrete(output_dim)
         self.features = input_dim
         self.module_list = nn.ModuleList()
@@ -401,6 +412,13 @@ class ColightNet(nn.Module):
             out = nn.Linear(block.d_out, self.action_space.n)
         name = f'output'
         output_dict.update({name: out})
+        
+        # make mask
+        unpadded_phase_mask = [torch.ones(length, dtype=torch.bool) for length in phase_lengths]
+        phase_mask = torch.nn.utils.rnn.pad_sequence(unpadded_phase_mask, batch_first=True)
+        mask_layer = MaskedOutput(mask=phase_mask, batch_size=self.batch_size, action_space=self.action_space)
+        output_dict.update({'out_mask': mask_layer})
+
         self.output_layer = nn.Sequential(output_dict)
 
     def forward(self, x, edge_index, train=True):
@@ -418,6 +436,19 @@ class ColightNet(nn.Module):
                 h = self.output_layer(h)
         return h
 
+class MaskedOutput(nn.Module):
+    def __init__(self, mask, batch_size, action_space):
+        super(MaskedOutput, self).__init__()
+        self.batch_size = batch_size
+        self.mask = mask
+        self.action_space = action_space
+
+    def forward(self, x):
+        # Apply the mask to the output
+        # x = torch.exp(x)
+        masked_output = x.reshape(-1 ,self.mask.shape[0], self.action_space.n) * self.mask
+        masked_output = masked_output.reshape(-1, self.mask.shape[-1])
+        return masked_output
 
 class Embedding_MLP(nn.Module):
     def __init__(self, in_size, layers):
@@ -481,7 +512,7 @@ class MultiHeadAttModel(MessagePassing):
 
         # x has shape [N, d], edge_index has shape [E, 2]
         edge_index, _ = add_self_loops(edge_index=edge_index)
-        edge_index = edge_index * (edge_index < x.size()[0])
+        # edge_index = edge_index * (edge_index < x.size()[0])
         aggregated = self.propagate(x=x, edge_index=edge_index)  # [16, 16]
         out = self.out(aggregated)
         out = F.relu(out)  # [ 16, 128]
