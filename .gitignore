@@ -16,3 +16,6 @@ sumo_ingolstadt
 ingo_experiments/dqn/ingo_evening_queue.xml
 ingo_experiments/dqn/ingo_morning_queue.xml
 ingo_experiments/dqn/ingo_noon_queue.xml
+ingo_experiments/colight/ingo_evening_queue.xml
+ingo_experiments/colight/ingo_morning_queue.xml
+ingo_experiments/colight/ingo_noon_queue.xml
