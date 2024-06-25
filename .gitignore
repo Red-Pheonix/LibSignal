@@ -35,3 +35,7 @@ ingo_experiments/dqn/ingo_combined_queue_9.xml
 ingo_experiments/dqn/ingo_combined_queue_10.xml
 ingo_experiments/dqn/ingo_combined_queue_11.xml
 ingo_experiments/dqn/ingo_combined_queue_12.xml
+ingo_experiments/maxpressure/ingo_evening_queue.xml
+ingo_experiments/maxpressure/ingo_morning_queue.xml
+ingo_experiments/maxpressure/ingo_noon_queue.xml
+ingo_experiments/maxpressure/ingo_sensor_queue.xml
