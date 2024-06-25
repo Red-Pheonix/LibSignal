@@ -2,7 +2,7 @@ from lxml import etree
 import os
 
 # Define the maximum number of data elements per file
-max_elements_per_file = 360
+max_elements_per_file = 1800
 
 # Initialize variables
 file_count = 0
@@ -21,7 +21,7 @@ def save_to_file(data_elements, file_count, input_file):
 
     new_tree = etree.ElementTree(new_root)
     input_file_name = os.path.basename(input_file)
-    new_filename = input_file_name.rstrip('.xml') + f'_{file_count}.xml'
+    new_filename = f"{file_count}_{input_file_name}"
     output_file = os.path.join(output_dir, new_filename)
     new_tree.write(output_file, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
@@ -29,7 +29,7 @@ def save_to_file(data_elements, file_count, input_file):
         element.clear()
 
 
-queue_file = 'ingo_experiments/dqn/ingo_morning_queue.xml'
+queue_file = 'ingo_experiments/dqn/ingo_combined_queue.xml'
 # Use iterparse to go through the large XML file
 for event, element in etree.iterparse(queue_file, events=('end',), tag='data', recover=True):
     # if lanes is not None and len(lanes):

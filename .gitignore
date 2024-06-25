@@ -23,3 +23,15 @@ ingo_experiments/colight/ingo_sensor_queue.xml
 ingo_experiments/dqn/ingo_sensor_queue.xml
 robust grid4x4 experiments/dqn/combined_sensor_queue.xml
 robust grid4x4 experiments/maxpressure/combined_sensor_queue.xml
+ingo_experiments/dqn/ingo_combined_queue_1.xml
+ingo_experiments/dqn/ingo_combined_queue_2.xml
+ingo_experiments/dqn/ingo_combined_queue_3.xml
+ingo_experiments/dqn/ingo_combined_queue_4.xml
+ingo_experiments/dqn/ingo_combined_queue_5.xml
+ingo_experiments/dqn/ingo_combined_queue_6.xml
+ingo_experiments/dqn/ingo_combined_queue_7.xml
+ingo_experiments/dqn/ingo_combined_queue_8.xml
+ingo_experiments/dqn/ingo_combined_queue_9.xml
+ingo_experiments/dqn/ingo_combined_queue_10.xml
+ingo_experiments/dqn/ingo_combined_queue_11.xml
+ingo_experiments/dqn/ingo_combined_queue_12.xml
