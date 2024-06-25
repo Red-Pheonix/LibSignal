@@ -20,7 +20,7 @@ def process_log_file(log_file):
 
     return final_df
 
-folder_path = 'robust grid4x4 experiments/*/'
+folder_path = 'ingo_experiments/*/'
 pattern = os.path.join(folder_path, '*DTL.log')
 matching_files = glob.glob(pattern)
 
@@ -29,7 +29,7 @@ for filename in matching_files:
     print(f"Processing {filename}...")
     df = process_log_file(filename)
     sub_folder_path = "/".join(filename.split("/")[:-1])
-    csv_filename = filename.split("/")[-1].rstrip("_DTL.log") + ".csv"
+    csv_filename = filename.split("/")[-1].rstrip("DTL.log").rstrip("_") + ".csv"
     csv_filename = os.path.join(sub_folder_path, csv_filename)
     df.to_csv(csv_filename, index=False)
 

@@ -21,3 +21,5 @@ ingo_experiments/colight/ingo_morning_queue.xml
 ingo_experiments/colight/ingo_noon_queue.xml
 ingo_experiments/colight/ingo_sensor_queue.xml
 ingo_experiments/dqn/ingo_sensor_queue.xml
+robust grid4x4 experiments/dqn/combined_sensor_queue.xml
+robust grid4x4 experiments/maxpressure/combined_sensor_queue.xml
