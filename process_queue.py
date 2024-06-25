@@ -35,7 +35,7 @@ def process_queue(queue_file):
     df['queueing_time'] = df['queueing_time'].astype(float)
     df['queueing_length'] = df['queueing_length'].astype(float)
 
-    df = df[~df['lane_id'].str.startswith(':')]
+    # df = df[~df['lane_id'].str.startswith(':')]
 
     df['interval'] = (df['timestep'] // 360).astype(int)
 
@@ -60,7 +60,7 @@ def process_queue(queue_file):
 
 # df = process_queue(queue_file)
 
-folder_path = 'robust grid4x4 experiments/*/'
+folder_path = 'ingo_experiments/dqn/'
 pattern = os.path.join(folder_path, '*queue.xml')
 matching_files = glob.glob(pattern)
 
