@@ -36,6 +36,8 @@ class MaxPressureAgent(BaseAgent):
         
         # the minimum duration of time of one phase
         self.t_min = Registry.mapping['model_mapping']['setting'].param['t_min']
+        
+        self.faulty_sensor = Registry.mapping['command_mapping']['setting'].param['faulty_sensor']
 
     def reset(self):
         '''
@@ -77,9 +79,10 @@ class MaxPressureAgent(BaseAgent):
         x_obs.append(self.ob_generator.generate())
         x_obs = np.array(x_obs, dtype=np.float32)
         
-        # x_obs = (x_obs + np.random.poisson(lam=0.5, size=x_obs.shape[-1]) - 1).clip(0)
-        # np.random.seed(self.rank)
-        # x_obs = x_obs * np.random.binomial(1, 0.9, x_obs.shape[-1])
+        if self.faulty_sensor:
+            x_obs = (x_obs + np.random.poisson(lam=0.5, size=x_obs.shape[-1]) - 1).clip(0)
+            np.random.seed(self.rank)
+            x_obs = x_obs * np.random.binomial(1, 0.9, x_obs.shape[-1])
         
         return x_obs
 
@@ -95,9 +98,10 @@ class MaxPressureAgent(BaseAgent):
         rewards.append(self.reward_generator.generate())
         rewards = np.squeeze(np.array(rewards)) * 12
         
-        # rewards = (rewards + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
-        # np.random.seed(self.rank)
-        # rewards = (rewards * np.random.binomial(1, 0.9, 1)).sum()
+        if self.faulty_sensor:
+            rewards = (rewards + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
+            np.random.seed(self.rank)
+            rewards = (rewards * np.random.binomial(1, 0.9, 1)).sum()
         
         return rewards
     

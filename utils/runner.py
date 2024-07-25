@@ -27,6 +27,7 @@ class Runner:
                 save_prefix="final",
                 load_dir="",
                 load_prefix="final",
+                faulty_sensor=False,
         ):
         """
         instantiate runner object with processed config and register config into Registry class
@@ -48,6 +49,7 @@ class Runner:
         runner_config['save_prefix'] = save_prefix
         runner_config['load_dir'] = load_dir
         runner_config['load_prefix'] = load_prefix
+        runner_config['faulty_sensor'] = faulty_sensor
 
         self.config, self.duplicate_config = build_config(runner_config)
         self.config_registry()

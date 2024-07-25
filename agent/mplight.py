@@ -129,6 +129,8 @@ class MPLightAgent(RLAgent):
             delays.append((node_idx, tmp_generator))
         sorted(delays, key=lambda x: x[0])
         self.delay = delays
+        
+        self.faulty_sensor = Registry.mapping['command_mapping']['setting'].param['faulty_sensor']
 
         # TODO check ob_length, compared with presslight and original mplight and RESCO-mplight
         # this is extracted from presslight so far
@@ -257,13 +259,14 @@ class MPLightAgent(RLAgent):
         if self.ob_order != None:
             x_obs = np.array(x_obs, dtype=np.float32)
 
-        # noisy_x_obs = []
-        # for i,x_ob in enumerate(x_obs):
-        #     x_ob = (x_ob + np.random.poisson(lam=0.5, size=6) - 1).clip(0)
-        #     np.random.seed(i)
-        #     x_ob = x_ob * np.random.binomial(1, 0.9, 6)
-        #     noisy_x_obs.append(x_ob)
-        # x_obs = noisy_x_obs
+        if self.faulty_sensor:
+            noisy_x_obs = []
+            for i,x_ob in enumerate(x_obs):
+                x_ob = (x_ob + np.random.poisson(lam=0.5, size=6) - 1).clip(0)
+                np.random.seed(i)
+                x_ob = x_ob * np.random.binomial(1, 0.9, 6)
+                noisy_x_obs.append(x_ob)
+            x_obs = noisy_x_obs
         
         return x_obs
 
@@ -281,13 +284,14 @@ class MPLightAgent(RLAgent):
             rewards.append(self.reward_generator[i][1].generate())
         rewards = np.squeeze(np.array(rewards))
         
-        # noisy_rewards = []
-        # for i, reward in enumerate(rewards):
-        #     reward = (reward + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
-        #     np.random.seed(i)
-        #     reward = (reward * np.random.binomial(1, 0.9, 1)).sum()
-        #     noisy_rewards.append(reward)
-        # rewards = noisy_rewards
+        if self.faulty_sensor:
+            noisy_rewards = []
+            for i, reward in enumerate(rewards):
+                reward = (reward + np.random.poisson(lam=0.5, size=1) - 1).clip(max=0).sum()
+                np.random.seed(i)
+                reward = (reward * np.random.binomial(1, 0.9, 1)).sum()
+                noisy_rewards.append(reward)
+            rewards = noisy_rewards
 
         return rewards
 

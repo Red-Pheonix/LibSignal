@@ -132,6 +132,8 @@ class CoLightAgent(RLAgent):
         self.optimizer = optim.RMSprop(self.model.parameters(),
                                        lr=self.learning_rate,
                                        alpha=0.9, centered=False, eps=1e-7)
+        
+        self.faulty_sensor = Registry.mapping['command_mapping']['setting'].param['faulty_sensor']
 
     def reset(self):
         observation_generators = []
@@ -198,9 +200,10 @@ class CoLightAgent(RLAgent):
             
         x_obs = np.array(x_obs, dtype=np.float32)
         
-        # x_obs = (x_obs + np.random.poisson(lam=0.5, size=x_obs.shape) - 1).clip(0)
-        # np.random.seed(0)
-        # x_obs = x_obs * np.random.binomial(1, 0.9, x_obs.shape)
+        if self.faulty_sensor:
+            x_obs = (x_obs + np.random.poisson(lam=0.5, size=x_obs.shape) - 1).clip(0)
+            np.random.seed(0)
+            x_obs = x_obs * np.random.binomial(1, 0.9, x_obs.shape)
 
         return x_obs
 
@@ -211,9 +214,10 @@ class CoLightAgent(RLAgent):
             rewards.append(self.reward_generator[i][1].generate())
         rewards = np.squeeze(np.array(rewards, dtype=np.float32)) * 12
         
-        # rewards = (rewards + np.random.poisson(lam=0.5, size=rewards.shape) - 1).clip(max=0)
-        # np.random.seed(0)
-        # rewards = (rewards * np.random.binomial(1, 0.9, rewards.shape))
+        if self.faulty_sensor:
+            rewards = (rewards + np.random.poisson(lam=0.5, size=rewards.shape) - 1).clip(max=0)
+            np.random.seed(0)
+            rewards = (rewards * np.random.binomial(1, 0.9, rewards.shape))
         
         return rewards
 
