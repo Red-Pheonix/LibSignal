@@ -29,7 +29,7 @@ def save_to_file(data_elements, file_count, input_file):
         element.clear()
 
 
-queue_file = 'ingo_experiments/dqn/ingo_combined_queue.xml'
+queue_file = 'test/ingo_combined_queue.xml'
 # Use iterparse to go through the large XML file
 for event, element in etree.iterparse(queue_file, events=('end',), tag='data', recover=True):
     # if lanes is not None and len(lanes):
@@ -46,4 +46,4 @@ for event, element in etree.iterparse(queue_file, events=('end',), tag='data', r
 # Save any remaining data elements to a new file
 if data_to_keep:
     file_count += 1
-    save_to_file(data_to_keep, file_count)
+    save_to_file(data_to_keep, file_count, queue_file)
