@@ -4,6 +4,7 @@ from common.metrics import Metrics
 from environment import TSCEnv
 from common.registry import Registry
 from trainer.base_trainer import BaseTrainer
+from tqdm import tqdm
 
 
 @Registry.register_trainer("tsc")
@@ -135,8 +136,12 @@ class TSCTrainer(BaseTrainer):
                     self.env.eng.set_save_replay(False)
             episode_loss = []
             i = 0
+            
+            pbar = tqdm(total= int (self.steps / self.action_interval), desc=f"Training Epoch {e}") 
+            
             while i < self.steps:
                 if i % self.action_interval == 0:
+                    pbar.update()
                     last_phase = np.stack([ag.get_phase() for ag in self.agents])  # [agent, intersections]
 
                     if total_decision_num > self.learning_start:
@@ -213,8 +218,12 @@ class TSCTrainer(BaseTrainer):
         self.metric.clear()
         for a in self.agents:
             a.reset()
+        
+        pbar = tqdm(total=int(self.test_steps / self.action_interval), desc=f"Testing Epoch {e}") 
+        
         for i in range(self.test_steps):
             if i % self.action_interval == 0:
+                pbar.update()
                 phases = np.stack([ag.get_phase() for ag in self.agents])
                 actions = []
                 for idx, ag in enumerate(self.agents):
@@ -257,8 +266,12 @@ class TSCTrainer(BaseTrainer):
         obs = self.env.reset()
         for a in self.agents:
             a.reset()
+
+        pbar = tqdm(total=int(self.test_steps / self.action_interval), desc="Final Test")     
+            
         for i in range(self.test_steps):
             if i % self.action_interval == 0:
+                pbar.update()
                 phases = np.stack([ag.get_phase() for ag in self.agents])
                 actions = []
                 for idx, ag in enumerate(self.agents):
@@ -275,6 +288,8 @@ class TSCTrainer(BaseTrainer):
                 break
         self.logger.info("Final Travel Time is %.4f, mean rewards: %.4f, queue: %.4f, delay: %.4f, throughput: %d" % (self.metric.real_average_travel_time(), \
             self.metric.rewards(), self.metric.queue(), self.metric.delay(), self.metric.throughput()))
+        self.writeLog("FINAL_TEST", 0, self.metric.real_average_travel_time(),\
+            100, self.metric.rewards(),self.metric.queue(),self.metric.delay(), self.metric.throughput())
         return self.metric
 
     def writeLog(self, mode, step, travel_time, loss, cur_rwd, cur_queue, cur_delay, cur_throughput):

@@ -22,14 +22,14 @@ trainer:
   ngpu: -1
   learning_start: 5000
   buffer_size: 5000
-  steps: 3600
-  test_steps: 3600
+  steps: 7200
+  test_steps: 7200
   yellow_length: 5
   action_interval: 10
-  episodes: 200
+  episodes: 100
   update_model_rate: 1
   update_target_rate: 10
-  test_when_train: True
+  test_when_train: False
 
 model:
   name: "non-rl"

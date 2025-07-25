@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <input>
+        <net-file value="tempe_cut.net.xml"/>
+        <route-files value="tempe_cut.rou.xml"/>
+    </input>
+    <time>
+        <begin value="27000.0"/>
+        <end value="34200.0"/>
+        <step-length value="1"/>
+    </time>
+</configuration>
