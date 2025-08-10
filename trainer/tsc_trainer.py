@@ -99,6 +99,12 @@ class TSCTrainer(BaseTrainer):
         if Registry.mapping['model_mapping']['setting'].param['name'] == 'magd':
             for ag in self.agents:
                 ag.link_agents(self.agents)
+        
+        # load models from checkpoint if enabled
+        is_load_model = Registry.mapping['model_mapping']['setting'].param['load_model']
+        load_model_episode = Registry.mapping['model_mapping']['setting'].param['load_model_episode']
+        if is_load_model:
+            [ag.load_model(load_model_episode) for ag in self.agents]
 
     def create_env(self):
         '''

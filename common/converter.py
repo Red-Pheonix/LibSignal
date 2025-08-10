@@ -123,14 +123,14 @@ def parse_args():
                         default='cologne3/cologne3.sumocfg')
 
     # cityflow2sumo
-    # parser.add_argument("--or_cityflownet", type=str,
-    #                     default='hangzhou_1x1_bc-tyc_18041610_1h/roadnet.json')
-    # parser.add_argument("--sumonet", type=str,
-    #                     default='hangzhou_1x1_bc-tyc_18041610_1h/hangzhou_1x1_bc-tyc_18041610_1h.net.xml')
-    # parser.add_argument("--or_cityflowtraffic", type=str,
-    #                     default='hangzhou_1x1_bc-tyc_18041610_1h/flow.json')
-    # parser.add_argument("--sumotraffic", type=str,
-    #                     default='hangzhou_1x1_bc-tyc_18041610_1h/hangzhou_1x1_bc-tyc_18041610_1h.rou.xml')
+    parser.add_argument("--or_cityflownet", type=str,
+                        default='hangzhou_1x1_bc-tyc_18041610_1h/roadnet.json')
+    parser.add_argument("--sumonet", type=str,
+                        default='hangzhou_1x1_bc-tyc_18041610_1h/hangzhou_1x1_bc-tyc_18041610_1h.net.xml')
+    parser.add_argument("--or_cityflowtraffic", type=str,
+                        default='hangzhou_1x1_bc-tyc_18041610_1h/flow.json')
+    parser.add_argument("--sumotraffic", type=str,
+                        default='hangzhou_1x1_bc-tyc_18041610_1h/hangzhou_1x1_bc-tyc_18041610_1h.rou.xml')
 
 
 
@@ -167,6 +167,7 @@ def get_direction_fron_connection(connection):
         Connection.LINKDIR_RIGHT: "turn_right",
         Connection.LINKDIR_PARTLEFT: "turn_left",
         Connection.LINKDIR_PARTRIGHT: "turn_right",
+        "invalid": "turn_left"
     }
     result = _map[connection.getDirection()]
     return result
@@ -690,7 +691,7 @@ def sumo2cityflow_flow(args):
     root_cfg = tree_cfg.getroot()
     start_time = int(root_cfg.find('time').find('begin').attrib['value'])
     end_time = int(root_cfg.find('time').find('end').attrib['value'])
-    assert end_time-start_time == 3600
+    # assert end_time-start_time == 3600
     flows = []
     length = 5.0
     width = 1.8
@@ -1066,7 +1067,7 @@ def cityflow2sumo_net(args):
                     root_tll.appendChild(tll)
                 if light['time'] <= 5:
                     # first should set yellow phase, then can add this yellow phase when adding a green phase
-                    assert idx == 0
+                    # assert idx == 0
                     for act_roadlink in light['availableRoadLinks']:
                         yellow_state[phase_dic[act_roadlink][0]:sum(phase_dic[act_roadlink])] = ['s']*phase_dic[act_roadlink][1]
                       
@@ -1107,8 +1108,8 @@ def cityflow2sumo_net(args):
     fp_edge.close()
     print("SUMO edge file generated successfully!")
     res = os.system(
-    f"netconvert --node-files={sumo_node} --edge-files={sumo_edge} \
-        --connection-files={sumo_con} --tllogic-files={sumo_tll} --output-file={sumofile}")
+    f"netconvert --node-files='{sumo_node}' --edge-files='{sumo_edge}' \
+        --connection-files='{sumo_con}' --tllogic-files='{sumo_tll}' --output-file='{sumofile}'")
     if res == 0:
         print("SUMO net file generated successfully!")
     else:

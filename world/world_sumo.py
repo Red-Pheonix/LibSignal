@@ -410,7 +410,7 @@ class World(object):
         self.interval = sumo_dict['interval']
         self.step_ratio = 1  # TODO: register in Registry later
         self.step_length = 1  # should be 1 in our setting
-        self.max_distance = 200 # TODO: set in registry
+        self.max_distance = 10000 # TODO: set in registry
         # get all intersections (dict here)
         self.intersection_ids = self.eng.trafficlight.getIDList()
         # prepare phase information for each intersections
