@@ -10,4 +10,15 @@
         <end value="34200"/>
         <step-length value="1"/>
     </time>
+
+    <!-- <processing>
+        <time-to-teleport value="0" />
+        <default.departlane value="random"/>
+        <lanechange.duration value="5"/>
+    </processing>
+
+    <random_number>
+        <seed value="23423"/>
+    </random_number> -->
+
 </configuration>
