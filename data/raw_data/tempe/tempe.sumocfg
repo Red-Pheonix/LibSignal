@@ -10,4 +10,8 @@
         <end value="34200"/>
         <step-length value="1"/>
     </time>
+
+    <processing>
+        <time-to-teleport value="0" />
+    </processing>
 </configuration>
