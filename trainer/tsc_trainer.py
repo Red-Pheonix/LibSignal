@@ -204,8 +204,8 @@ class TSCTrainer(BaseTrainer):
             if e % self.save_rate == 0:
                 [ag.save_model(e=e) for ag in self.agents]
             self.logger.info("episode:{}/{}, real avg travel time:{}".format(e, self.episodes, self.metric.real_average_travel_time()))
-            for j in range(len(self.world.intersections)):
-                self.logger.debug("intersection:{}, mean_episode_reward:{}, mean_queue:{}".format(j, self.metric.lane_rewards()[j],\
+            for j, inter in enumerate(self.world.intersections):
+                self.logger.debug("intersection:{}, mean_episode_reward:{}, mean_queue:{}".format(inter.id, self.metric.lane_rewards()[j],\
                      self.metric.lane_queue()[j]))
             if self.test_when_train:
                 self.train_test(e)
