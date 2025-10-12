@@ -593,7 +593,8 @@ class World(object):
         vehicle_speed = self.eng.get_vehicle_speed()
 
         for lane in lanes:
-            vehicles = lane_vehicles[lane]
+            # vehicles = lane_vehicles[lane]
+            vehicles = [v for v in lane_vehicles[lane] if "shadow" not in v]
             lane_vehicle_count = len(vehicles)
             lane_avg_speed = 0.0
             for vehicle in vehicles:
