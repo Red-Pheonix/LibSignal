@@ -419,6 +419,8 @@ class World(object):
         '''
         throughput = 0
         for dic in self.dic_vehicle_arrive_leave_time:
+            if "shadow" in dic:
+                continue 
             vehicle = self.dic_vehicle_arrive_leave_time[dic]
             if (not np.isnan(vehicle["cost_time"])) and vehicle["leave_time"] <= self.eng.get_current_time():
                 throughput += 1
