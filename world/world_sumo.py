@@ -417,7 +417,7 @@ class World(object):
         self.intersection_ids = self.eng.trafficlight.getIDList()
         # prepare phase information for each intersections
         self.green_phases = self.generate_valid_phase()
-        # g_phases = {k:[(phase.duration,phase.state) for phase in phases] for  k,phases in self.green_phases.items()}
+        g_phases = {k:[(phase.duration,phase.state) for phase in phases] for  k,phases in self.green_phases.items()}
         # self.eng.trafficlight.Phase(10, "r")
         with open("tempe.pkl", "wb") as f:
             pickle.dump(g_phases, f)
